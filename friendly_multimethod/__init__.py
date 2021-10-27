@@ -1,0 +1,1 @@
+from friendly_multimethod.decorator import multimethod
