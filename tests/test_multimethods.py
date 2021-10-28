@@ -58,7 +58,7 @@ def test_multimethod_finds_handler_even_if_more_generic_parameter_fails():
         called.add(handler1)
 
     def handler2(a, b: int):
-        called.add(handler1)
+        called.add(handler2)
 
     called = set()
 
@@ -70,3 +70,34 @@ def test_multimethod_finds_handler_even_if_more_generic_parameter_fails():
     # the multimethod should call handler1 although the first argument on handler2 is more generic
     assert handler1 in called
     assert handler2 not in called
+
+
+def test_multimethod_tries_next_handler_if_binding_fails():
+    def handler1():
+        called.add(handler1)
+
+    def handler2(x):
+        called.add(handler2)
+
+    called = set()
+
+    method = MultiMethod(handlers=[handler1, handler2])
+
+    # this call signature matches only the first argument of handler2 but not the second
+    method()
+
+    # the multimethod should call handler1 although the first argument on handler2 is more generic
+    assert handler1 in called
+    assert handler2 not in called
+
+
+def test_dispatch_on_predicate():
+    def even(x: lambda x: x % 2 == 0):
+        return "even"
+
+    def odd(x: lambda x: x % 2 == 1):
+        return "odd"
+
+    method = MultiMethod(handlers=[even, odd])
+
+    assert method(42) == "even"

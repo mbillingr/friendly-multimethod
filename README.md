@@ -34,6 +34,5 @@ hello, default handler!
 
 ## Coming Soon
 
-- predicate-based dispatch
 - PyPi package
 - continuous integration
